@@ -9,21 +9,21 @@ const readline = require('readline');
  * error handling .etc
  */
 function REPL(config) {
-    const replName = config.name;
+    const {
+        name,
+        read,
+        eval,
+        welcomeMsg,
+        exitMsg
+    } = config;
 
-    const replEvalFunc = config.eval;
-
-    const replWelcome = config.replWelcome;
-
-    const replExit = config.replExit;
-
-    // Welcome message - could've been in a better way.
-    console.log("\n\n", replWelcome, "\n\n");
+    // Welcome message - could've been done in a better way.
+    console.log("\n\n", welcomeMsg, "\n\n");
     
     const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
-        prompt: `${replName}> `
+        prompt: `${name}> `
     });
 
     rl.prompt();
@@ -31,8 +31,11 @@ function REPL(config) {
     rl.on('line', (line) => {
         const input = line.trim();
 
+        // read
+        const readInput = read(input);
+
         // evalutate
-        const resultFromEval = replEvalFunc(input);
+        const resultFromEval = eval(readInput);
 
         // print
         console.log("-> ", resultFromEval);
@@ -41,7 +44,7 @@ function REPL(config) {
         // idk if this is mem. eff in the long run
         rl.prompt();
     }).on('close', () => {
-        console.log("\n", replExit);
+        console.log("\n\n", exitMsg);
         process.exit(0);
     });
 }
