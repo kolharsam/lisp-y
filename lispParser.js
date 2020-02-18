@@ -136,7 +136,10 @@ function lispParserStep2(flatList) {
                 pointer++;
 
                 continue;
-            } else if((listCopy[pointer].type === validTokens.NAME) || (listCopy[pointer].type === validTokens.NUMBER)) {
+            } else if (
+                (listCopy[pointer].type === validTokens.NAME) ||
+                (listCopy[pointer].type === validTokens.NUMBER)
+            ) {
                 // gives the output that is expected
                 nestedList.push(listCopy[pointer].value);
 
@@ -165,15 +168,19 @@ function lispParserStep2(flatList) {
  * @returns {(string|number)[][]} - something that closely represents an AST
  */
 function lispParser(expr="") {
+    if (expr === "") {
+        // we can ignore the empty string
+        return [];
+    }
+
     // Check for errors in input early and stop the
     // execution of the function as early as possible
-    if (typeof expr !== "string") {
+    if (typeof expr !== "string" && expr[0] !== "(") {
         throw new TypeError("Invalid Expression!");
     }
 
-    if (expr === "") {
-        // or we could also simply ignore it.
-        return [""];
+    if (expr === "()") {
+        return [];
     }
 
     // now, knowing that the input holds some merit, process it further
