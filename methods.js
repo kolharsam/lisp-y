@@ -54,7 +54,9 @@ function list() {
 // get the first element from a collection
 function first() {
     const args = getArgs(arguments);
-    const argsCount = args;
+    const argsCount = args.length;
+
+    console.log(args, argsCount);
 
     if (argsCount !== 1) {
         throwError({
@@ -69,6 +71,8 @@ function first() {
     return coll[0];
 }
 
+// The idea is to get as close as possible
+// to a symbol lookup table
 module.exports = {
     "list": list,
     "add" : add,
