@@ -4,6 +4,7 @@
 // which I feel is absolutely amusing. One of the many things
 // that are amazing about a list.
 
+// NOTE:
 // could've used variadic functions too. But yeah, I just wanted
 // to use the arguments object for fun and also that lisp-y wants
 // run in a lot more environments...like one's before the ES6 and
@@ -15,7 +16,7 @@
 function throwError(err) {
     const {func, message} = err;
 
-    const errOn = `Error: on ${func} call.`;
+    const errOn = `Error: on ${func} function call.`;
 
     const completeMessage = errOn + "\n" + message;
 
@@ -59,6 +60,11 @@ function first() {
     console.log(args, argsCount);
 
     if (argsCount !== 1) {
+        // I'm doing this because I think it would help
+        // for something like prop-types to exist for node
+        // projects and this object representation atleast
+        // would help in the documentation process
+
         throwError({
             func: "first",
             message: "too many arguments"
