@@ -37,8 +37,10 @@ function REPL(config) {
         // evalutate
         const resultFromEval = eval(readInput);
 
-        // print
-        console.log("-> ", resultFromEval);
+        if (resultFromEval.length) {
+            // print
+            console.log("-> ", resultFromEval);
+        }
 
         // this is what keeps the repl going!
         // idk if this is mem. eff in the long run

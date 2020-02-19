@@ -16,6 +16,11 @@ function evaluate(ast) {
         throw new TypeError("Not a valid AST");
     }
 
+    // when enter is pressed or () is passed as input
+    if (!ast.length) {
+        return ast;
+    }
+
     const [func, ...args] = ast;
 
     let argList = args.reduce((currentList, currentElement) => {
