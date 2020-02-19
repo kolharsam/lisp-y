@@ -3,6 +3,9 @@
 
 const readline = require('readline');
 
+// TODO: Can add autocomplete feature for the REPL! Option is available on the
+// readline package
+
 /**
  * Drives the repl for the current lisp
  * @param {Object} config - use the config to set the REPL name, function to evalute,
@@ -37,9 +40,14 @@ function REPL(config) {
         // evalutate
         const resultFromEval = eval(readInput);
 
-        if (resultFromEval.length) {
-            // print
-            console.log("-> ", resultFromEval);
+        if (Array.isArray(resultFromEval)) {
+            if (resultFromEval.length) {
+                // print for list outputs
+                console.log("-> ", resultFromEval);
+            }
+        } else {
+             // print for other statements
+             console.log("-> ", resultFromEval);
         }
 
         // this is what keeps the repl going!
