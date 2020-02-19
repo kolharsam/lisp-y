@@ -1,11 +1,14 @@
 const repl = require('./repl');
+
 const lispParser = require('./lispParser');
+const evaluate = require('./evaluate'); 
 
 const replConfig = {
-    replWelcome: "Welcome to lisp-y!",
+    welcomeMsg: "Welcome to lisp-y!",
     name: "lisp-y",
-    eval: lispParser,
-    replExit: "Bye!"
+    read: lispParser,
+    eval: evaluate,
+    exitMsg: "Bye!"
 };
 
 repl(replConfig);
