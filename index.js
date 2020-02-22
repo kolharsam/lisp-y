@@ -1,5 +1,14 @@
-const lispParser = require('./lispParser');
+const repl = require('./repl');
 
-const testExpression = "(first (list 5 (add 1 2) 9)";
+const lispParser = require('./parser');
+const evaluate = require('./eval');
 
-console.log(lispParser(testExpression));
+const replConfig = {
+    welcomeMsg: "Welcome to lisp-y!",
+    name: "lisp-y",
+    read: lispParser,
+    evaluate,
+    exitMsg: "Bye!"
+};
+
+repl(replConfig);

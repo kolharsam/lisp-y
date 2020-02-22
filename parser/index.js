@@ -15,13 +15,10 @@ const OPENPARENS = /\(/;
 const CLOSEPARENS = /\)/;
 const WHITESPACE = /\s/;
 const CHARS = /[a-zA-Z]/;
-const NUMBERS = /[0-9]/;
+const NUMBERS = /[+-]?[0-9]/;
 
 // valid token types
 const validTokens = {PARENS: "parens", NAME: "name", NUMBER: "number"};
-
-// TODO: A stack can be used to see whether the parenthesis are balanced or not,
-// but for now I am ignoring that, and assuming that the expressions are all valid ones.
 
 // May not be required since the second-phase of the current parser can be modified
 // to also check for the complete-ness of the expression
@@ -79,15 +76,27 @@ function lispParserStep1(expr) {
         // where you can include function to help format the value to the
         // required format
 
-        if (NUMBERS.test(exprCopy[cursor])) {
+        // added or condition to support negative numbers too
+        if (NUMBERS.test(exprCopy[cursor]) || exprCopy[cursor] === "-") {
             let value = "";
+            let isNegative = false;
+
+            if (exprCopy[cursor] === "-") {
+                isNegative = true;
+                // move beyond the negative sign
+                cursor++;
+            }
 
             while (NUMBERS.test(exprCopy[cursor])) {
                 value += exprCopy[cursor];
                 cursor++;
             }
 
-            const numericalValue = parseInt(value, 10);
+            let numericalValue = parseInt(value, 10);
+
+            if (isNegative) {
+                numericalValue *= -1;
+            }
 
             step1Result.push({
                 type: "number",
@@ -117,7 +126,6 @@ function lispParserStep2(flatList) {
     let pointer = 0;
 
     const flatListCopy = flatList;
-    const flatListLength = flatListCopy.length;
 
     // a helper for traversing the parsed list and returning an AST for 1 s-exp
     function recursiveTraverse(list) {
@@ -136,7 +144,10 @@ function lispParserStep2(flatList) {
                 pointer++;
 
                 continue;
-            } else if((listCopy[pointer].type === validTokens.NAME) || (listCopy[pointer].type === validTokens.NUMBER)) {
+            } else if (
+                (listCopy[pointer].type === validTokens.NAME) ||
+                (listCopy[pointer].type === validTokens.NUMBER)
+            ) {
                 // gives the output that is expected
                 nestedList.push(listCopy[pointer].value);
 
@@ -165,15 +176,19 @@ function lispParserStep2(flatList) {
  * @returns {(string|number)[][]} - something that closely represents an AST
  */
 function lispParser(expr="") {
+    if (expr === "") {
+        // we can ignore the empty string
+        return [];
+    }
+
     // Check for errors in input early and stop the
     // execution of the function as early as possible
-    if (typeof expr !== "string") {
+    if (typeof expr !== "string" && expr[0] !== "(") {
         throw new TypeError("Invalid Expression!");
     }
 
-    if (expr === "") {
-        // or we could also simply ignore it.
-        return [""];
+    if (expr === "()") {
+        return [];
     }
 
     // now, knowing that the input holds some merit, process it further
