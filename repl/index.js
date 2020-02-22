@@ -2,9 +2,7 @@
 // Trying to keep things a little fancy here for the complete lisp-env experience
 
 const readline = require('readline');
-
-// TODO: Can add autocomplete feature for the REPL! Option is available on the
-// readline package
+const autoComplete = require('./autoComplete');
 
 /**
  * Drives the repl for the current lisp
@@ -26,7 +24,8 @@ function REPL(config) {
     const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
-        prompt: `${name}> `
+        prompt: `${name}> `,
+        completer: autoComplete
     });
 
     rl.prompt();
