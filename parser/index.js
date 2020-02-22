@@ -20,9 +20,6 @@ const NUMBERS = /[+-]?[0-9]/;
 // valid token types
 const validTokens = {PARENS: "parens", NAME: "name", NUMBER: "number"};
 
-// TODO: A stack can be used to see whether the parenthesis are balanced or not,
-// but for now I am ignoring that, and assuming that the expressions are all valid ones.
-
 // May not be required since the second-phase of the current parser can be modified
 // to also check for the complete-ness of the expression
 
