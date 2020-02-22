@@ -15,7 +15,7 @@ const OPENPARENS = /\(/;
 const CLOSEPARENS = /\)/;
 const WHITESPACE = /\s/;
 const CHARS = /[a-zA-Z]/;
-const NUMBERS = /[0-9]/;
+const NUMBERS = /[+-]?[0-9]/;
 
 // valid token types
 const validTokens = {PARENS: "parens", NAME: "name", NUMBER: "number"};
@@ -79,15 +79,27 @@ function lispParserStep1(expr) {
         // where you can include function to help format the value to the
         // required format
 
-        if (NUMBERS.test(exprCopy[cursor])) {
+        // added or condition to support negative numbers too
+        if (NUMBERS.test(exprCopy[cursor]) || exprCopy[cursor] === "-") {
             let value = "";
+            let isNegative = false;
+
+            if (exprCopy[cursor] === "-") {
+                isNegative = true;
+                // move beyond the negative sign
+                cursor++;
+            }
 
             while (NUMBERS.test(exprCopy[cursor])) {
                 value += exprCopy[cursor];
                 cursor++;
             }
 
-            const numericalValue = parseInt(value, 10);
+            let numericalValue = parseInt(value, 10);
+
+            if (isNegative) {
+                numericalValue *= -1;
+            }
 
             step1Result.push({
                 type: "number",
@@ -117,7 +129,6 @@ function lispParserStep2(flatList) {
     let pointer = 0;
 
     const flatListCopy = flatList;
-    const flatListLength = flatListCopy.length;
 
     // a helper for traversing the parsed list and returning an AST for 1 s-exp
     function recursiveTraverse(list) {

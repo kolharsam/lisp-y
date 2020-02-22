@@ -15,7 +15,7 @@ function REPL(config) {
     const {
         name,
         read,
-        eval,
+        evaluate,
         welcomeMsg,
         exitMsg
     } = config;
@@ -38,7 +38,7 @@ function REPL(config) {
         const readInput = read(input);
 
         // evalutate
-        const resultFromEval = eval(readInput);
+        const resultFromEval = evaluate(readInput);
 
         if (Array.isArray(resultFromEval)) {
             if (resultFromEval.length) {

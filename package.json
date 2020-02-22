@@ -1,7 +1,7 @@
 {
   "name": "recurse",
   "version": "0.0.1",
-  "description": "A lisp parser for Pair Programming for the recurse center",
+  "description": "lisp-y is a wannabe lisp, built based on Clojure",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -3,15 +3,9 @@
 // The AST can reduced to simplified values based on
 // the functions that are passed to it as input.
 
-// What I hadn't thought of:
-// Multiple nested sibilings within a single expr
-// For Example:
-//          (sort (list (add 1 2) (subtract 3 2) 2 4))
-//          which yields (1 2 3 4)
+const supportedMethods = require("../lib");
 
-const supportedMethods = require("./methods");
-
-function evaluate(ast) {    
+function evaluate(ast) {
     if (!Array.isArray(ast)) {
         throw new TypeError("Not a valid AST");
     }
