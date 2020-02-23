@@ -200,13 +200,13 @@ function lispParser(expr="") {
     const exprLength = expr.length;
 
     if (expr[exprLength-1] !== ")") {
-        throw new TypeError("Invalid Expression!");
+        throw new Error("Invalid Expression!");
     }
 
     // Check for errors in input early and stop the
     // execution of the function as early as possible
     if (typeof expr !== "string" && expr[0] !== "(") {
-        throw new TypeError("Invalid Expression!");
+        throw new Error("Invalid Expression!");
     }
 
     if (expr === "()") {
