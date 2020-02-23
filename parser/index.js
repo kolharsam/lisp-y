@@ -16,9 +16,11 @@ const CLOSEPARENS = /\)/;
 const WHITESPACE = /\s/;
 const CHARS = /[a-zA-Z]/;
 const NUMBERS = /[+-]?[0-9]/;
+const STRINGS = /\w/;
+const QUOTE = /"/;
 
 // valid token types
-const validTokens = {PARENS: "parens", NAME: "name", NUMBER: "number"};
+const validTokens = {PARENS: "parens", NAME: "name", NUMBER: "number", STRING: "string"};
 
 // May not be required since the second-phase of the current parser can be modified
 // to also check for the complete-ness of the expression
@@ -37,13 +39,13 @@ function lispParserStep1(expr) {
     let step1Result = [];
 
     while(cursor < exprLength) {
-        // ignore whitespaces & end parenthesis
+        // ignore whitespaces & end parentheses
         if (WHITESPACE.test(exprCopy[cursor])) {
             cursor++;
             continue;
         }
 
-        // check if it is the opening parenthesis
+        // check if it is an opening parentheses or closed parentheses
         // it will serve as a marker in the next
         // step of the parser
         if (OPENPARENS.test(exprCopy[cursor]) || CLOSEPARENS.test(exprCopy[cursor])) {
@@ -106,8 +108,28 @@ function lispParserStep1(expr) {
             continue;
         }
 
-        // TODO: Add support for a "string" token, which will be similar to the ones
-        // above, but just that the value will start with " in the beginning
+        // Identifying String tokens
+
+        if (QUOTE.test(exprCopy[cursor])) {
+            // move cursor beyond the quote
+            cursor++;
+            let value = "";
+
+            while(!(QUOTE.test(exprCopy[cursor]))) {
+                value += expr[cursor];
+                cursor++;
+            }
+
+            // move beyond the ending quote
+            cursor++;
+
+            step1Result.push({
+                type: "string",
+                value
+            });
+
+            continue;
+        }
     }
 
     return step1Result;
@@ -133,6 +155,8 @@ function lispParserStep2(flatList) {
         const listLen = list.length;
         const nestedList = [];
 
+        // NOTE: Perhaps use better condition or use something like .filter or .some
+
         while (pointer < listLen) {
             if (listCopy[pointer].type === validTokens.PARENS && listCopy[pointer].value !== ")") {
                 //get pointer beyond the "("
@@ -146,7 +170,8 @@ function lispParserStep2(flatList) {
                 continue;
             } else if (
                 (listCopy[pointer].type === validTokens.NAME) ||
-                (listCopy[pointer].type === validTokens.NUMBER)
+                (listCopy[pointer].type === validTokens.NUMBER) ||
+                (listCopy[pointer].type === validTokens.STRING)
             ) {
                 // gives the output that is expected
                 nestedList.push(listCopy[pointer].value);
@@ -179,6 +204,13 @@ function lispParser(expr="") {
     if (expr === "") {
         // we can ignore the empty string
         return [];
+    }
+
+    // simple check to see if the last char of the expression is a closing parentheses
+    const exprLength = expr.length;
+
+    if (expr[exprLength-1] !== ")") {
+        throw new TypeError("Invalid Expression!");
     }
 
     // Check for errors in input early and stop the
