@@ -9,4 +9,5 @@
 - [ ] Pretty print output, Colors?
 - [ ] Method abstractions
 - [ ] Library to be split based on the purpose that they serve.
- 
+- [ ] Errors with error codes with their respective messages.
+- [ ] Change the way the AST is consumed, use all the details
