@@ -12,7 +12,7 @@ There are many many more items that I/we should check off before we can call it 
 
 ## Here's the BIG check-list of items we need to check off
 
-- [ ] Add `Code Transformation` & `Code Gen` compiler steps
+- [ ] Add `Code Transformation` & `Code Gen` compiler steps (although this is mostly a (parser+eval) interpreter as of now) 
 - [ ] Better & standard regular expressions to generate the `tokens`
 - [ ] Support `Local` & `Global` bindings. (using the keyword `let`)
 - [ ] More `core-lib` functions
