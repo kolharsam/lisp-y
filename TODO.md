@@ -12,3 +12,4 @@
 - [ ] Add `map` data structure.
 - [ ] Add `map` based core-lib functions
 - [ ] Add `prettier` and maybe `es-lint` too.
+- [ ] Add examples & docs for each function
