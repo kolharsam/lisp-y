@@ -7,7 +7,7 @@ const supportedMethods = require("../lib");
 
 function evaluate(ast) {
     if (!Array.isArray(ast)) {
-        throw new TypeError("Not a valid AST");
+        throw new Error("Not a valid AST");
     }
 
     // when enter is pressed or () is passed as input
