@@ -8,9 +8,10 @@ const CHARS = /[a-zA-Z]/;
 const NUMBERS = /[+-]?[0-9]/;
 const STRINGS = /\w/;
 const QUOTE = /"/;
+const OPENBRACKET = /{/;
 
 // valid token types
-const validTokens = {PARENS: "parens", NAME: "name", NUMBER: "number", STRING: "string"};
+const validTokens = {PARENS: "parens", NAME: "name", NUMBER: "number", STRING: "string", MAP: "map"};
 
 // May not be required since the second-phase of the current parser can be modified
 // to also check for the complete-ness of the expression
@@ -120,6 +121,98 @@ function lispParserStep1(expr) {
 
             continue;
         }
+
+        if(OPENBRACKET.test(exprCopy[cursor])) {
+            // move the cursor beyond the {
+            cursor++;
+
+            if (exprCopy[cursor] === "}") {
+                step1Result.push({
+                    type: "map",
+                    value: {}
+                });
+
+                cursor++;
+
+                continue;
+            }
+
+            let mapValues = "";
+
+            // accumulate all values of the map until I
+            // get to the end of the map
+            while(exprCopy[cursor] !== "}") {
+                mapValues += exprCopy[cursor];
+                cursor++;
+            }
+
+            // now, we can split by whitespace or commas, which
+            // ever one that works out and see if there are an
+            // even number of values
+            let keyValueSplits;
+
+            if(mapValues.indexOf(",") !== -1) {
+                keyValueSplits = mapValues.split(", ");
+            } else {
+                keyValueSplits = mapValues.split(" ");
+            }
+
+            if(keyValueSplits.length % 2 !== 0) {
+                throw new Error("Syntax error");
+            }
+
+            let objValue = {};
+            let keys = [], values = [];
+
+            keyValueSplits.forEach((objVal, index) => {
+                // even indices are the keys
+                if(index % 2 === 0) {
+                    // keys have to either begin with either : or "
+                    if (objVal[0] === ":") {
+                        const [colon, ...restOfKey] = objVal;
+                        keys.push(restOfKey.join(""));
+                    } else if (objVal[0] === "\"") {
+                        const keySplit = objVal.split("\"");
+                        const keyVal = keySplit[1];
+
+                        keys.push(keyVal);
+                    }
+                }
+
+                // odd indices are the values
+                if(index % 2 !== 0) {
+                    // TODO: Check if this a valid data-type
+                    values.push(objVal);
+                }
+
+            });
+
+            keys.forEach((key, index) => {
+                // check for value type and then do attach the values
+                // possibly a try-catch with parseInt
+                const currentValue = values[index];
+
+                const isNumerical = parseInt(currentValue);
+
+                if(Number.isNaN(isNumerical)) {
+                    // it is a string
+                    const valSplit = currentValue.split("\"");
+                    objValue[key] = valSplit[1];
+                } else {
+                    // it is a number
+                    objValue[key] = isNumerical;
+                }
+            });
+
+            step1Result.push({
+                type: "map",
+                value: objValue
+            });
+
+            // move beyond the last }
+            cursor++;
+            continue;
+        }
     }
 
     return step1Result;
@@ -161,7 +254,8 @@ function lispParserStep2(flatList) {
             } else if (
                 (listCopy[pointer].type === validTokens.NAME) ||
                 (listCopy[pointer].type === validTokens.NUMBER) ||
-                (listCopy[pointer].type === validTokens.STRING)
+                (listCopy[pointer].type === validTokens.STRING) ||
+                (listCopy[pointer].type === validTokens.MAP)
             ) {
                 // gives the output that is expected
                 nestedList.push(listCopy[pointer].value);
