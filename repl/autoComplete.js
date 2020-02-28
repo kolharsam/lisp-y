@@ -1,4 +1,4 @@
-const libFunctions = require('../lib');
+const libFunctions = require("../lib");
 
 function autoComplete(line) {
     const completions = Object.keys(libFunctions);
