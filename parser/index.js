@@ -11,7 +11,13 @@ const QUOTE = /"/;
 const OPENBRACKET = /{/;
 
 // valid token types
-const validTokens = {PARENS: "parens", NAME: "name", NUMBER: "number", STRING: "string", MAP: "map"};
+const validTokens = {
+    PARENS: "parens",
+    NAME: "name",
+    NUMBER: "number",
+    STRING: "string",
+    MAP: "map",
+};
 
 // May not be required since the second-phase of the current parser can be modified
 // to also check for the complete-ness of the expression
@@ -29,7 +35,7 @@ function lispParserStep1(expr) {
     let cursor = 0;
     let step1Result = [];
 
-    while(cursor < exprLength) {
+    while (cursor < exprLength) {
         // ignore whitespaces & end parentheses
         if (WHITESPACE.test(exprCopy[cursor])) {
             cursor++;
@@ -39,10 +45,13 @@ function lispParserStep1(expr) {
         // check if it is an opening parentheses or closed parentheses
         // it will serve as a marker in the next
         // step of the parser
-        if (OPENPARENS.test(exprCopy[cursor]) || CLOSEPARENS.test(exprCopy[cursor])) {
+        if (
+            OPENPARENS.test(exprCopy[cursor]) ||
+            CLOSEPARENS.test(exprCopy[cursor])
+        ) {
             step1Result.push({
                 type: "parens",
-                value: exprCopy[cursor]
+                value: exprCopy[cursor],
             });
 
             cursor++;
@@ -59,7 +68,7 @@ function lispParserStep1(expr) {
 
             step1Result.push({
                 type: "name",
-                value
+                value,
             });
 
             continue;
@@ -93,7 +102,7 @@ function lispParserStep1(expr) {
 
             step1Result.push({
                 type: "number",
-                value: numericalValue
+                value: numericalValue,
             });
 
             continue;
@@ -106,7 +115,7 @@ function lispParserStep1(expr) {
             cursor++;
             let value = "";
 
-            while(!(QUOTE.test(exprCopy[cursor]))) {
+            while (!QUOTE.test(exprCopy[cursor])) {
                 value += expr[cursor];
                 cursor++;
             }
@@ -116,20 +125,20 @@ function lispParserStep1(expr) {
 
             step1Result.push({
                 type: "string",
-                value
+                value,
             });
 
             continue;
         }
 
-        if(OPENBRACKET.test(exprCopy[cursor])) {
+        if (OPENBRACKET.test(exprCopy[cursor])) {
             // move the cursor beyond the {
             cursor++;
 
             if (exprCopy[cursor] === "}") {
                 step1Result.push({
                     type: "map",
-                    value: {}
+                    value: {},
                 });
 
                 cursor++;
@@ -141,7 +150,7 @@ function lispParserStep1(expr) {
 
             // accumulate all values of the map until I
             // get to the end of the map
-            while(exprCopy[cursor] !== "}") {
+            while (exprCopy[cursor] !== "}") {
                 mapValues += exprCopy[cursor];
                 cursor++;
             }
@@ -151,28 +160,29 @@ function lispParserStep1(expr) {
             // even number of values
             let keyValueSplits;
 
-            if(mapValues.indexOf(",") !== -1) {
+            if (mapValues.indexOf(",") !== -1) {
                 keyValueSplits = mapValues.split(", ");
             } else {
                 keyValueSplits = mapValues.split(" ");
             }
 
-            if(keyValueSplits.length % 2 !== 0) {
+            if (keyValueSplits.length % 2 !== 0) {
                 throw new Error("Syntax error");
             }
 
             let objValue = {};
-            let keys = [], values = [];
+            let keys = [],
+                values = [];
 
             keyValueSplits.forEach((objVal, index) => {
                 // even indices are the keys
-                if(index % 2 === 0) {
+                if (index % 2 === 0) {
                     // keys have to either begin with either : or "
                     if (objVal[0] === ":") {
                         const [colon, ...restOfKey] = objVal;
                         keys.push(restOfKey.join(""));
-                    } else if (objVal[0] === "\"") {
-                        const keySplit = objVal.split("\"");
+                    } else if (objVal[0] === '"') {
+                        const keySplit = objVal.split('"');
                         const keyVal = keySplit[1];
 
                         keys.push(keyVal);
@@ -180,11 +190,10 @@ function lispParserStep1(expr) {
                 }
 
                 // odd indices are the values
-                if(index % 2 !== 0) {
+                if (index % 2 !== 0) {
                     // TODO: Check if this a valid data-type
                     values.push(objVal);
                 }
-
             });
 
             keys.forEach((key, index) => {
@@ -194,9 +203,9 @@ function lispParserStep1(expr) {
 
                 const isNumerical = parseInt(currentValue);
 
-                if(Number.isNaN(isNumerical)) {
+                if (Number.isNaN(isNumerical)) {
                     // it is a string
-                    const valSplit = currentValue.split("\"");
+                    const valSplit = currentValue.split('"');
                     objValue[key] = valSplit[1];
                 } else {
                     // it is a number
@@ -206,7 +215,7 @@ function lispParserStep1(expr) {
 
             step1Result.push({
                 type: "map",
-                value: objValue
+                value: objValue,
             });
 
             // move beyond the last }
@@ -241,7 +250,10 @@ function lispParserStep2(flatList) {
         // NOTE: Perhaps use better condition or use something like .filter or .some
 
         while (pointer < listLen) {
-            if (listCopy[pointer].type === validTokens.PARENS && listCopy[pointer].value !== ")") {
+            if (
+                listCopy[pointer].type === validTokens.PARENS &&
+                listCopy[pointer].value !== ")"
+            ) {
                 //get pointer beyond the "("
                 pointer++;
 
@@ -252,10 +264,10 @@ function lispParserStep2(flatList) {
 
                 continue;
             } else if (
-                (listCopy[pointer].type === validTokens.NAME) ||
-                (listCopy[pointer].type === validTokens.NUMBER) ||
-                (listCopy[pointer].type === validTokens.STRING) ||
-                (listCopy[pointer].type === validTokens.MAP)
+                listCopy[pointer].type === validTokens.NAME ||
+                listCopy[pointer].type === validTokens.NUMBER ||
+                listCopy[pointer].type === validTokens.STRING ||
+                listCopy[pointer].type === validTokens.MAP
             ) {
                 // gives the output that is expected
                 nestedList.push(listCopy[pointer].value);
@@ -277,14 +289,13 @@ function lispParserStep2(flatList) {
     return resultList;
 }
 
-
 /**
  * The main lisp parser method that can be exported to produce an AST for a valid
  * lisp-y expression.
  * @param {string} expr - a lisp-y expression
  * @returns {(string|number)[][]} - something that closely represents an AST
  */
-function lispParser(expr="") {
+function lispParser(expr = "") {
     if (expr === "") {
         // we can ignore the empty string
         return [];
@@ -293,7 +304,7 @@ function lispParser(expr="") {
     // simple check to see if the last char of the expression is a closing parentheses
     const exprLength = expr.length;
 
-    if (expr[exprLength-1] !== ")") {
+    if (expr[exprLength - 1] !== ")") {
         throw new Error("Invalid Expression!");
     }
 

@@ -4,7 +4,8 @@
   "description": "lisp-y is a wannabe lisp, built based on Clojure",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "run-prettier": "./node_modules/.bin/prettier --write ./**/*.js"
   },
   "keywords": [
     "LISP",
