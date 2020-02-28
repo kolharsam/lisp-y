@@ -12,7 +12,7 @@
 - [ ] Errors with error codes with their respective messages.
 - [ ] Change the way the AST is consumed, use all the details (this is required for bindings)
 - [x] Add `map` data structure.
-- [-] Add `map` based core-lib functions
+- [ ] Add `map` based core-lib functions
   - [x] assoc
   - [x] dissoc
 - [ ] Add `prettier` and maybe `es-lint` too.
