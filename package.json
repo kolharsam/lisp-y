@@ -11,5 +11,18 @@
     "REPL"
   ],
   "author": "Sameer Kolhar",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "husky": "^4.2.3",
+    "lint-staged": "^10.0.8",
+    "prettier": "^1.19.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,css,md}": "prettier --write"
+  }
 }
