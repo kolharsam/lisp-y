@@ -1,5 +1,5 @@
 {
-  "name": "recurse",
+  "name": "lisp-y",
   "version": "0.0.1",
   "description": "lisp-y is a wannabe lisp, built based on Clojure",
   "main": "index.js",
