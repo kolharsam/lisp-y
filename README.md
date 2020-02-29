@@ -31,3 +31,7 @@ More & more functions will be supported soon! You could also help build some if 
     On my machine, I'm developing the program using
     Node: v10.16.0
 ```
+
+#### Footnote
+
+There's post by *the* [Norvig](http://norvig.com/lispy.html) in which he creates a lisp interpreter using Python. It's only a coincidence that the one I'm building is also known as ***lispy***. But yeah, check the article anyway if you're not interested in this repo.
