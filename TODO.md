@@ -16,6 +16,6 @@
     -   [x] assoc
     -   [x] dissoc
 -   [x] Add `prettier`.
--   [ ] Add examples & docs for each function
+-   [ ] Add examples, docs and test for each function within the core lib
 -   [ ] Add support for nested `map`(s)
 -   [x] Add Tests support
