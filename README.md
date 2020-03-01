@@ -6,6 +6,8 @@
 // Output: "My attempt at making a lisp"
 ```
 
+![lisp-y CI](https://github.com/kolharsam/lisp-y/workflows/lisp-y%20CI/badge.svg)
+
 ## Notes
 
 As of now, only some methods have been added which can be evaluated. But yes, over time I hope to keep building on this.
