@@ -18,3 +18,4 @@
 -   [x] Add `prettier`.
 -   [ ] Add examples & docs for each function
 -   [ ] Add support for nested `map`(s)
+-   [x] Add Tests support
