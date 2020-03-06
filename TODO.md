@@ -3,7 +3,7 @@
 -   [x] Add `String` token support (Parser)
 -   [ ] Parser step 1 is too tightly-coupled at the moment. Change it by separating the logic into
         multiple functions.
--   [ ] Tail call optimisation (eval)
+-   [x] Tail call optimisation (eval)
 -   [ ] Fraction rep. on divide function
 -   [x] Add autocomplete support
 -   [ ] Fix autocomplete support for `lib` functions
