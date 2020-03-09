@@ -10,7 +10,7 @@ function reducedArgList(args) {
         if (!Array.isArray(currentElement)) {
             return [...currentList, currentElement];
         }
-        
+
         // NOTE: I don't know if this will improve the performance
         // but the point being that the recursive action is `tail`-ed
         return [...currentList, evaluate(currentElement)];
@@ -28,11 +28,11 @@ function evaluate(ast) {
     }
 
     const [func, ...args] = ast;
-    
+
     if (!supportedMethods[func]) {
         throw new Error(`${func} method doesn't exist!`);
     }
-    
+
     return supportedMethods[func](...reducedArgList(args));
 }
 
