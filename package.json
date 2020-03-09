@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
+    "build": "nexe -i index.js -n lispy",
     "run-prettier": "./node_modules/.bin/prettier --write ./**/*.js"
   },
   "keywords": [

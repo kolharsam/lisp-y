@@ -4,16 +4,29 @@
 const readline = require("readline");
 const autoComplete = require("./autoComplete");
 
+function closeREPL(exitMessage) {
+    const completeExitMessage = "".concat("\n\n", exitMessage);
+    console.log(completeExitMessage);
+    // exit with status 0
+    process.exit(0);
+}
+
+// When the input is any of these strings, just ignore and show the prompt
+// This is helpful as we save ourselves from going through 2 if statements
+// before printing the result
+const letGoCases = ["()", ""];
+
 /**
  * Drives the repl for the current lisp
  * @param {Object} config - use the config to set the REPL name, function to evalute,
  * error handling .etc
  */
 function REPL(config) {
-    const { name, read, evaluate, welcomeMsg, exitMsg } = config;
+    const { name, read, evaluate, welcomeMsg, details, exitMsg } = config;
 
     // Welcome message - could've been done in a better way.
-    console.log("\n\n", welcomeMsg, "\n\n");
+    const completeWelcomeMsg = "".concat(welcomeMsg, "\n", details, "\n");
+    console.log(completeWelcomeMsg);
 
     const rl = readline.createInterface({
         input: process.stdin,
@@ -27,19 +40,23 @@ function REPL(config) {
     rl.on("line", line => {
         const input = line.trim();
 
-        // read
-        const readInput = read(input);
+        // if the input is .exit then quit the REPL
+        if (input === ".exit") {
+            closeREPL(exitMsg);
+        }
 
-        // evalutate
-        const resultFromEval = evaluate(readInput);
+        // see if there's match with any of our `let go` cases
+        const checkIfLetGo = letGoCases.filter(expInput => input === expInput);
 
-        if (Array.isArray(resultFromEval)) {
-            if (resultFromEval.length) {
-                // print for list outputs
-                console.log("-> ", resultFromEval);
-            }
-        } else {
-            // print for other statements
+        if (!checkIfLetGo.length) {
+            // there's no match, then do these
+
+            // read
+            const readInput = read(input);
+
+            // evalutate
+            const resultFromEval = evaluate(readInput);
+            // print
             console.log("-> ", resultFromEval);
         }
 
@@ -47,8 +64,7 @@ function REPL(config) {
         // idk if this is mem. eff in the long run
         rl.prompt();
     }).on("close", () => {
-        console.log("\n\n", exitMsg);
-        process.exit(0);
+        closeREPL(exitMsg);
     });
 }
 
