@@ -19,3 +19,5 @@
 -   [ ] Add examples, docs and test for each function within the core lib
 -   [ ] Add support for nested `map`(s)
 -   [x] Add Tests support
+-   [x] Add support for quoted lists
+-   [x] Add support for float values
