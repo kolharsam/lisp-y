@@ -62,8 +62,6 @@ function isValidDecimal(number) {
             return [...numberOfDecimals, currentElement];
         }, []).length;
 
-    console.log(dotCount);
-
     return dotCount === 0 || dotCount === 1;
 }
 
