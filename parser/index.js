@@ -1,14 +1,21 @@
 // The Parser for lisp-y
 
+// NOTE: I just realized that this is a terrible parser
+
+const parserUtils = require("./util.js");
+
 // Required Regular Expressions
-const OPENPARENS = /\(/;
-const CLOSEPARENS = /\)/;
+const OPEN_PARENS = /\(/;
+const CLOSE_PARENS = /\)/;
 const WHITESPACE = /\s/;
 const CHARS = /[a-zA-Z]/;
 const NUMBERS = /[+-]?[0-9]/;
 const STRINGS = /\w/;
-const QUOTE = /"/;
-const OPENBRACKET = /{/;
+const DOUBLE_QUOTE = /"/;
+const OPEN_BRACKET = /{/;
+const SINGLE_QUOTE = /'/;
+const COMMA = ",";
+const COMMA_WHITESPACE = ", ";
 
 // valid token types
 const validTokens = {
@@ -46,8 +53,8 @@ function lispParserStep1(expr) {
         // it will serve as a marker in the next
         // step of the parser
         if (
-            OPENPARENS.test(exprCopy[cursor]) ||
-            CLOSEPARENS.test(exprCopy[cursor])
+            OPEN_PARENS.test(exprCopy[cursor]) ||
+            CLOSE_PARENS.test(exprCopy[cursor])
         ) {
             step1Result.push({
                 type: "parens",
@@ -94,7 +101,7 @@ function lispParserStep1(expr) {
                 cursor++;
             }
 
-            let numericalValue = parseInt(value, 10);
+            let numericalValue = parserUtils.getNumberValue(value);
 
             if (isNegative) {
                 numericalValue *= -1;
@@ -110,12 +117,12 @@ function lispParserStep1(expr) {
 
         // Identifying String tokens
 
-        if (QUOTE.test(exprCopy[cursor])) {
+        if (DOUBLE_QUOTE.test(exprCopy[cursor])) {
             // move cursor beyond the quote
             cursor++;
             let value = "";
 
-            while (!QUOTE.test(exprCopy[cursor])) {
+            while (!DOUBLE_QUOTE.test(exprCopy[cursor])) {
                 value += expr[cursor];
                 cursor++;
             }
@@ -131,7 +138,7 @@ function lispParserStep1(expr) {
             continue;
         }
 
-        if (OPENBRACKET.test(exprCopy[cursor])) {
+        if (OPEN_BRACKET.test(exprCopy[cursor])) {
             // move the cursor beyond the {
             cursor++;
 
@@ -160,7 +167,7 @@ function lispParserStep1(expr) {
             // even number of values
             let keyValueSplits;
 
-            if (mapValues.indexOf(",") !== -1) {
+            if (mapValues.indexOf(COMMA) !== -1) {
                 keyValueSplits = mapValues.split(", ");
             } else {
                 keyValueSplits = mapValues.split(" ");
@@ -201,15 +208,15 @@ function lispParserStep1(expr) {
                 // possibly a try-catch with parseInt
                 const currentValue = values[index];
 
-                const isNumerical = parseInt(currentValue);
+                const numberValue = parserUtils.getNumberValue(currentValue);
 
-                if (Number.isNaN(isNumerical)) {
+                if (typeof numberValue !== "number") {
                     // it is a string
                     const valSplit = currentValue.split('"');
                     objValue[key] = valSplit[1];
                 } else {
                     // it is a number
-                    objValue[key] = isNumerical;
+                    objValue[key] = numberValue;
                 }
             });
 
@@ -221,6 +228,38 @@ function lispParserStep1(expr) {
             // move beyond the last }
             cursor++;
             continue;
+        }
+
+        // Support for quoted lists
+        if (SINGLE_QUOTE.test(exprCopy[cursor])) {
+            let listContent = "(list ";
+
+            // Move past the (
+            cursor += 2;
+
+            // get all text within the brackets
+            while (!CLOSE_PARENS.test(exprCopy[cursor])) {
+                listContent += exprCopy[cursor++];
+            }
+
+            // These are the values within the brackets
+            // splitting on whitespace. I also realize
+            // that commas and a combination of commas
+            // and spaces can be used. So I thought I could
+            // resolve this issue by recursively going through
+            // the list
+
+            listContent += ")";
+
+            const listValue = lispParserStep1(listContent);
+
+            // move cursor past the )
+            cursor++;
+
+            // append the values of the parsed values to the current
+            // step1Result since it'll just be like using the "list"
+            // keyword
+            step1Result = [...step1Result, ...listValue];
         }
     }
 
@@ -301,24 +340,30 @@ function lispParser(expr = "") {
         return [];
     }
 
-    // simple check to see if the last char of the expression is a closing parentheses
-    const exprLength = expr.length;
-
-    if (expr[exprLength - 1] !== ")") {
-        throw new Error("Invalid Expression!");
-    }
-
-    // Check for errors in input early and stop the
-    // execution of the function as early as possible
-    if (typeof expr !== "string" && expr[0] !== "(") {
-        throw new Error("Invalid Expression!");
-    }
-
     if (expr === "()") {
+        // we can ignore the empty expression too
         return [];
     }
 
-    // now, knowing that the input holds some merit, process it further
+    // simple check to see if the last char of the expression is a closing parentheses
+    const exprLength = expr.length;
+
+    // first character of the current input
+    const firstChar = expr[0];
+
+    // Check for errors in input early and stop the
+    // execution of the function as early as possible
+    if (!(OPEN_PARENS.test(firstChar) || SINGLE_QUOTE.test(firstChar))) {
+        throw new Error("Invalid Expression!");
+    }
+
+    // check if the parentheses are balanced
+    if (!parserUtils.checkParentheses(expr)) {
+        throw new Error("Parentheses are not balanced");
+    }
+
+    // now, that the parens are balanced, do further parsing
+
     const flatListOfTokens = lispParserStep1(expr);
     const finalParsedOutput = lispParserStep2(flatListOfTokens);
 
