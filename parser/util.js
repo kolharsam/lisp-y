@@ -42,7 +42,33 @@ function getNumberValue(numString) {
     return numValue;
 }
 
+/**
+ * Counts the number of decimal points in the number string
+ * This method operates on the string form of the input as recorded in the input
+ *
+ * Also, parseFloat handles this silently. I don't want that, the policy is to
+ * make noise if you find something inconsistent
+ * @param {string} number
+ * @returns {bool} - whether it is a valid decimal number.
+ */
+function isValidDecimal(number) {
+    const dotCount = number
+        .split("")
+        .reduce((numberOfDecimals, currentElement) => {
+            if (currentElement !== ".") {
+                return numberOfDecimals;
+            }
+
+            return [...numberOfDecimals, currentElement];
+        }, []).length;
+
+    console.log(dotCount);
+
+    return dotCount === 0 || dotCount === 1;
+}
+
 module.exports = {
     checkParentheses,
     getNumberValue,
+    isValidDecimal,
 };

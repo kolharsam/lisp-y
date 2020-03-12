@@ -9,7 +9,7 @@ const OPEN_PARENS = /\(/;
 const CLOSE_PARENS = /\)/;
 const WHITESPACE = /\s/;
 const CHARS = /[a-zA-Z]/;
-const NUMBERS = /[+-]?[0-9]/;
+const NUMBERS = /[0-9]/;
 const STRINGS = /\w/;
 const DOUBLE_QUOTE = /"/;
 const OPEN_BRACKET = /{/;
@@ -96,9 +96,14 @@ function lispParserStep1(expr) {
                 cursor++;
             }
 
-            while (NUMBERS.test(exprCopy[cursor])) {
+            while (NUMBERS.test(exprCopy[cursor]) || exprCopy[cursor] === ".") {
                 value += exprCopy[cursor];
                 cursor++;
+            }
+
+            // check if it contains 1 or 0 decimal points
+            if (!parserUtils.isValidDecimal(value)) {
+                throw new Error("Not a valid decimal number");
             }
 
             let numericalValue = parserUtils.getNumberValue(value);
@@ -365,6 +370,7 @@ function lispParser(expr = "") {
     // now, that the parens are balanced, do further parsing
 
     const flatListOfTokens = lispParserStep1(expr);
+
     const finalParsedOutput = lispParserStep2(flatListOfTokens);
 
     // the parsed output returns a list and hence we can return this.
