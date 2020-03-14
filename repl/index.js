@@ -56,12 +56,16 @@ function REPL(config) {
 
             // evalutate
             const resultFromEval = evaluate(readInput);
-            // print
-            console.log("-> ", resultFromEval);
+
+            // NOTE: This is because the `print` method returns an undefined and
+            // so this conditional is mainly present to not show that to users.
+            if (resultFromEval !== undefined) {
+                // print
+                console.log("-> ", resultFromEval);
+            }
         }
 
         // this is what keeps the repl going!
-        // idk if this is mem. eff in the long run
         rl.prompt();
     }).on("close", () => {
         closeREPL(exitMsg);
