@@ -9,7 +9,7 @@
 -   [ ] Fix autocomplete support for `lib` functions
 -   [ ] Method abstractions
 -   [ ] Library to be split based on the purpose that they serve.
--   [ ] Errors with error codes with their respective messages.
+-   [x] Error reporting as a separate module, consistent reporting throughout.
 -   [ ] Change the way the AST is consumed, use all the details (this is required for bindings)
 -   [x] Add `map` data structure.
 -   [ ] Add `map` based core-lib functions
