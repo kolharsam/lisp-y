@@ -4,6 +4,7 @@
 // the functions that are passed to it as input.
 
 const supportedMethods = require("../lib");
+const throwError = require("../error").throwError;
 
 function reducedArgList(args) {
     return args.reduce((currentList, currentElement) => {
@@ -19,7 +20,8 @@ function reducedArgList(args) {
 
 function evaluate(ast) {
     if (!Array.isArray(ast)) {
-        throw new Error("Not a valid AST");
+        throwError({ message: "Not a valid AST" });
+        return;
     }
 
     // when enter is pressed or () is passed as input
@@ -30,7 +32,8 @@ function evaluate(ast) {
     const [func, ...args] = ast;
 
     if (!supportedMethods[func]) {
-        throw new Error(`${func} method doesn't exist!`);
+        throwError(`${func} method doesn't exist!`);
+        return;
     }
 
     return supportedMethods[func](...reducedArgList(args));

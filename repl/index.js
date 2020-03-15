@@ -61,7 +61,7 @@ function REPL(config) {
             // so this conditional is mainly present to not show that to users.
             if (resultFromEval !== undefined) {
                 // print
-                console.log("-> ", resultFromEval);
+                console.log("\n-> ", resultFromEval, "\n");
             }
         }
 
