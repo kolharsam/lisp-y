@@ -3,6 +3,7 @@
 // NOTE: I just realized that this is a terrible parser
 
 const parserUtils = require("./util.js");
+const showParserError = require("../error").showParseError;
 
 // Required Regular Expressions
 const OPEN_PARENS = /\(/;
@@ -10,7 +11,6 @@ const CLOSE_PARENS = /\)/;
 const WHITESPACE = /\s/;
 const CHARS = /[a-zA-Z]/;
 const NUMBERS = /[0-9]/;
-const STRINGS = /\w/;
 const DOUBLE_QUOTE = /"/;
 const OPEN_BRACKET = /{/;
 const SINGLE_QUOTE = /'/;
@@ -103,7 +103,8 @@ function lispParserStep1(expr) {
 
             // check if it contains 1 or 0 decimal points
             if (!parserUtils.isValidDecimal(value)) {
-                throw new Error("Not a valid decimal number");
+                showParserError();
+                return;
             }
 
             let numericalValue = parserUtils.getNumberValue(value);
@@ -173,13 +174,14 @@ function lispParserStep1(expr) {
             let keyValueSplits;
 
             if (mapValues.indexOf(COMMA) !== -1) {
-                keyValueSplits = mapValues.split(", ");
+                keyValueSplits = mapValues.split(COMMA_WHITESPACE);
             } else {
                 keyValueSplits = mapValues.split(" ");
             }
 
             if (keyValueSplits.length % 2 !== 0) {
-                throw new Error("Syntax error");
+                showParserError();
+                return;
             }
 
             let objValue = {};
@@ -359,12 +361,14 @@ function lispParser(expr = "") {
     // Check for errors in input early and stop the
     // execution of the function as early as possible
     if (!(OPEN_PARENS.test(firstChar) || SINGLE_QUOTE.test(firstChar))) {
-        throw new Error("Invalid Expression!");
+        showParserError();
+        return;
     }
 
     // check if the parentheses are balanced
     if (!parserUtils.checkParentheses(expr)) {
-        throw new Error("Parentheses are not balanced");
+        showParserError();
+        return;
     }
 
     // now, that the parens are balanced, do further parsing
