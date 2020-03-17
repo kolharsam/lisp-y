@@ -8,6 +8,8 @@
 
 ![lisp-y CI](https://github.com/kolharsam/lisp-y/workflows/lisp-y%20CI/badge.svg)
 
+[![Run on Repl.it](https://repl.it/badge/github/kolharsam/lisp-y)](https://repl.it/github/kolharsam/lisp-y)
+
 ## Notes
 
 As of now, only some methods have been added which can be evaluated. But yes, over time I hope to keep building on this.
