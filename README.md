@@ -32,7 +32,7 @@ More & more functions will be supported soon! You could also help build some if 
 ```
     On my machine, I'm developing the program using
     Node: v10.16.0
-`
+```
 
 #### Footnote
 
