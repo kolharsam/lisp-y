@@ -6,9 +6,7 @@
 // Output: "My attempt at making a lisp"
 ```
 
-![lisp-y CI](https://github.com/kolharsam/lisp-y/workflows/lisp-y%20CI/badge.svg)
-
-[![Run on Repl.it](https://repl.it/badge/github/kolharsam/lisp-y)](https://repl.it/github/kolharsam/lisp-y)
+![lisp-y CI](https://github.com/kolharsam/lisp-y/workflows/lisp-y%20CI/badge.svg) [![Run on Repl.it](https://repl.it/badge/github/kolharsam/lisp-y)](https://repl.it/github/kolharsam/lisp-y)
 
 ## Notes
 
@@ -34,7 +32,7 @@ More & more functions will be supported soon! You could also help build some if 
 ```
     On my machine, I'm developing the program using
     Node: v10.16.0
-```
+`
 
 #### Footnote
 
