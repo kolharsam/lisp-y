@@ -9,7 +9,11 @@ const throwError = require("../error").throwError;
 function reducedArgList(args) {
     return args.reduce((currentList, currentElement) => {
         if (!Array.isArray(currentElement)) {
-            return [...currentList, currentElement];
+            // using only the value for the evaluation
+            // the type information can also be checked,
+            // if necessary.
+
+            return [...currentList, currentElement.value];
         }
 
         // NOTE: I don't know if this will improve the performance
@@ -31,12 +35,16 @@ function evaluate(ast) {
 
     const [func, ...args] = ast;
 
-    if (!supportedMethods[func]) {
-        throwError(`${func} method doesn't exist!`);
+    // .value parameter is being used to consume
+    // the value of the token and like mentioned
+    // above the type information can be used too
+
+    if (!supportedMethods[func.value]) {
+        throwError({ message: `${func.value} method doesn't exist!` });
         return;
     }
 
-    return supportedMethods[func](...reducedArgList(args));
+    return supportedMethods[func.value](...reducedArgList(args));
 }
 
 module.exports = evaluate;

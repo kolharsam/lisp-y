@@ -13,6 +13,7 @@ const CHARS = /[a-zA-Z]/;
 const NUMBERS = /[0-9]/;
 const DOUBLE_QUOTE = /"/;
 const OPEN_BRACKET = /{/;
+const CLOSE_BRACKET = /}/;
 const SINGLE_QUOTE = /'/;
 const COMMA = ",";
 const COMMA_WHITESPACE = ", ";
@@ -148,7 +149,7 @@ function lispParserStep1(expr) {
             // move the cursor beyond the {
             cursor++;
 
-            if (exprCopy[cursor] === "}") {
+            if (CLOSE_BRACKET.test(exprCopy[cursor])) {
                 step1Result.push({
                     type: "map",
                     value: {},
@@ -163,7 +164,7 @@ function lispParserStep1(expr) {
 
             // accumulate all values of the map until I
             // get to the end of the map
-            while (exprCopy[cursor] !== "}") {
+            while (!CLOSE_BRACKET.test(exprCopy[cursor])) {
                 mapValues += exprCopy[cursor];
                 cursor++;
             }
@@ -276,7 +277,7 @@ function lispParserStep1(expr) {
 /**
  * Produces a list of a function with it's arguments, which in our case might be other such lists
  * @param {Object[]} flatList - list of tokens
- * @param {number} cursor - the index on the flatlist from which we traversing the list
+ * @param {number} cursor - an indicator to see where we're on the flatlist
  * @returns {(string|number|Object)[][]} - something that closely resembles an AST for a lisp
  */
 function lispParserStep2(flatList) {
@@ -315,8 +316,8 @@ function lispParserStep2(flatList) {
                 listCopy[pointer].type === validTokens.STRING ||
                 listCopy[pointer].type === validTokens.MAP
             ) {
-                // gives the output that is expected
-                nestedList.push(listCopy[pointer].value);
+                // using the full data provided in Step 1
+                nestedList.push(listCopy[pointer]);
 
                 // preserves the details that were extracted in the previous step
                 // nestedList.push(listCopy[pointer]);
