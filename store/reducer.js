@@ -26,7 +26,7 @@ const storeReducer = (state = {}, action) => {
 
     // Check if a value is provided
     if (action.data.value) {
-        value = action.data.name;
+        value = action.data.value;
     }
 
     // If only a name is provided, then it is a delete operation
@@ -50,4 +50,4 @@ const storeReducer = (state = {}, action) => {
     }
 };
 
-module.export = storeReducer;
+module.exports = storeReducer;
