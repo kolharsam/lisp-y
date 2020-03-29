@@ -7,7 +7,11 @@ const supportedMethods = require("../lib");
 const throwError = require("../error").throwError;
 const varStore = require("../store");
 
-function reducedArgList(args, isFuncDef = false) {
+// special forms are evaluated differently than the usual
+// lisp code that are applying a bunch of functions
+const validSpecialForms = ["def", "ldef"];
+
+function reducedArgList(args, specialForm) {
     return args.reduce((currentList, currentElement) => {
         if (!Array.isArray(currentElement)) {
             // using only the value for the evaluation
@@ -16,7 +20,7 @@ function reducedArgList(args, isFuncDef = false) {
 
             const { type, value } = currentElement;
 
-            if (type === "name" && !isFuncDef) {
+            if (type === "symbol" && specialForm !== "def") {
                 // if it is a name, then we check if
                 // variable listed in our var store.
                 // if not then this should be reported
@@ -65,16 +69,46 @@ function evaluate(ast) {
     // above the type information can be used too
     const functionName = func.value;
 
-    // this boolean will help us not to report an
-    // error if a name is being defined using def
-    const isFuncDef = functionName === "def";
+    // Of the currenly supported special forms, we check if
+    // the current function might be any one of those
+    const filterSpecialFunc = validSpecialForms.filter(
+        funct => funct === functionName
+    );
+
+    const isFuncSpecial = filterSpecialFunc.length > 0;
+
+    // since there at most 1 match from all the special forms
+    let specialFunction = filterSpecialFunc[0];
 
     if (!supportedMethods[functionName]) {
         throwError({ message: `${functionName} method doesn't exist!` });
         return;
     }
 
-    const reducedArguments = reducedArgList(args, isFuncDef);
+    if (specialFunction === "ldef") {
+        const [bindings, expressions] = args;
+
+        let evaluatedBindings = bindings.value.reduce(
+            (newObj, currentElement) => {
+                if (currentElement.type === "expression") {
+                    return [
+                        ...newObj,
+                        {
+                            type: "expression",
+                            value: evaluate(currentElement.value),
+                        },
+                    ];
+                }
+
+                return [...newObj, currentElement];
+            },
+            []
+        );
+
+        return supportedMethods[functionName](evaluatedBindings, expressions);
+    }
+
+    const reducedArguments = reducedArgList(args, specialFunction);
 
     if (!reducedArguments) {
         // this is done to prevent readline throwing an error
