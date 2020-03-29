@@ -5,11 +5,11 @@ const parserUtils = require("../parser/util");
 
 const statement = "(add 1 2 (multiply 43.12 13))";
 const validAST = [
-    { type: "name", value: "add" },
+    { type: "symbol", value: "add" },
     { type: "number", value: 1 },
     { type: "number", value: 2 },
     [
-        { type: "name", value: "multiply" },
+        { type: "symbol", value: "multiply" },
         { type: "number", value: 43.12 },
         { type: "number", value: 13 },
     ],
