@@ -31,7 +31,7 @@ function checkParentheses(expr) {
  * @returns {number}
  */
 function getNumberValue(numString) {
-    let numValue = parseFloat(numString, 10);
+    let numValue = parseFloat(numString);
 
     if (Number.isNaN(numValue)) {
         // It's not a number at all
@@ -157,14 +157,14 @@ function markBindings(statement) {
             continue;
         }
 
-        if (CHARS.test(currentChar) && !insideExp) {
+        if (CHARS.test(currentChar)) {
             currentValue += currentChar;
 
             pointer++;
             continue;
         }
 
-        if (WHITESPACE.test(currentChar) && !insideExp) {
+        if (WHITESPACE.test(currentChar)) {
             bindings.push(currentValue);
 
             currentValue = "";

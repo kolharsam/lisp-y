@@ -420,9 +420,6 @@ function lispParser(expr = "") {
         return [];
     }
 
-    // simple check to see if the last char of the expression is a closing parentheses
-    const exprLength = expr.length;
-
     // first character of the current input
     const firstChar = expr[0];
 

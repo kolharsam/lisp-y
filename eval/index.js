@@ -75,8 +75,6 @@ function evaluate(ast) {
         funct => funct === functionName
     );
 
-    const isFuncSpecial = filterSpecialFunc.length > 0;
-
     // since there at most 1 match from all the special forms
     let specialFunction = filterSpecialFunc[0];
 
