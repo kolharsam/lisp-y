@@ -35,9 +35,9 @@ const storeReducer = (state = {}, action) => {
     // is already present then it is an update operation
 
     switch (action.type) {
-        case globalActions.GLOBAL_VAR_UPDATE:
+        case globalActions.VAR_UPDATE:
             return { ...state, [name]: value };
-        case globalActions.GLOBAL_VAR_DELETE:
+        case globalActions.VAR_DELETE:
             return Object.keys(state).reduce((updatedState, currentKey) => {
                 if (currentKey === name) {
                     return updatedState;
