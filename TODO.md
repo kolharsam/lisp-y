@@ -21,3 +21,7 @@
 -   [x] Add Tests support
 -   [x] Add support for quoted lists
 -   [x] Add support for float values
+-   [ ] Add support for doc-strings and a doc function for all core-lib functions
+-   [ ] Add support for maps within ldef statements
+-   [ ] Make evaluate understand standalone parsed statements, it doesn't need to
+        be a s-expression always
