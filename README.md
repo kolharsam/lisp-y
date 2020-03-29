@@ -6,7 +6,7 @@
 // Output: "My attempt at making a lisp"
 ```
 
-![lisp-y CI](https://github.com/kolharsam/lisp-y/workflows/lisp-y%20CI/badge.svg) [![Run on Repl.it](https://repl.it/badge/github/kolharsam/lisp-y)](https://repl.it/github/kolharsam/lisp-y)
+![lisp-y CI](https://github.com/kolharsam/lisp-y/workflows/lisp-y%20CI/badge.svg) [![Run on Repl.it](https://repl.it/badge/github/kolharsam/lisp-y)](https://repl.it/github/kolharsam/lisp-y) [![DeepScan grade](https://deepscan.io/api/teams/8319/projects/10466/branches/145810/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=8319&pid=10466&bid=145810)
 
 ## Notes
 
@@ -36,4 +36,4 @@ More & more functions will be supported soon! You could also help build some if 
 
 #### Footnote
 
-There's post by *the* [Norvig](http://norvig.com/lispy.html) in which he creates a lisp interpreter using Python. It's only a coincidence that the one I'm building is also known as ***lispy***. But yeah, check the article anyway if you're not interested in this repo.
+There's post by _the_ [Norvig](http://norvig.com/lispy.html) in which he creates a lisp interpreter using Python. It's only a coincidence that the one I'm building is also known as **_lispy_**. But yeah, check the article anyway if you're not interested in this repo.
