@@ -65,8 +65,123 @@ function isValidDecimal(number) {
     return dotCount === 0 || dotCount === 1;
 }
 
+// NOTE: But really though, I should be using good Regular
+// Expressions to be doing this for me. Help? Please?
+
+/**
+ * Returns the variable names and their specific values
+ * This method will mainly be used by let bindings
+ * @param {string} statement
+ * @returns {string[]} bindings - variable's along with their
+ * values/init?. If a falsy value is retuned then, it should
+ * be reported as an error
+ */
+
+function markBindings(statement) {
+    // basically all we need to do is,
+    // locate the white spaces between
+    // the names and the expressions
+    // that we must evaluate
+
+    if (typeof statement !== "string") {
+        return undefined;
+    }
+
+    let bindings = [],
+        insideExp = false,
+        currentValue = "",
+        pointer = 0,
+        numberOfBounds = 0;
+
+    const statementSplits = statement.split(""),
+        statementLen = statementSplits.length;
+
+    const CHARS = /[a-zA-Z]/,
+        WHITESPACE = /\s/;
+
+    while (pointer < statementLen) {
+        const currentChar = statementSplits[pointer];
+
+        if (pointer === 0 && !CHARS.test(currentChar)) {
+            return undefined;
+        }
+
+        if (insideExp) {
+            if (currentChar === '"') {
+                pointer++;
+
+                while (statementSplits[pointer] !== '"') {
+                    currentValue += statementSplits[pointer++];
+                }
+            } else if (currentChar === "'" || currentChar === "(") {
+                if (currentChar === "'") {
+                    pointer += 2;
+                    // if there's a ' present, it must be there for
+                    // quoted lists
+                    currentValue += "'(";
+                } else {
+                    pointer++;
+                    currentValue += currentChar;
+                }
+
+                numberOfBounds = 1;
+
+                while (true) {
+                    if (statementSplits[pointer] === "(") {
+                        numberOfBounds++;
+                    }
+
+                    if (statementSplits[pointer] === ")") {
+                        numberOfBounds--;
+
+                        if (numberOfBounds === 0) {
+                            currentValue += ")";
+                            break;
+                        }
+                    }
+
+                    currentValue += statementSplits[pointer++];
+                }
+            } else {
+                // because it is an unrecognised expr. character
+                return undefined;
+            }
+
+            insideExp = false;
+
+            bindings.push(currentValue);
+
+            currentValue = "";
+
+            pointer += 2;
+            continue;
+        }
+
+        if (CHARS.test(currentChar) && !insideExp) {
+            currentValue += currentChar;
+
+            pointer++;
+            continue;
+        }
+
+        if (WHITESPACE.test(currentChar) && !insideExp) {
+            bindings.push(currentValue);
+
+            currentValue = "";
+
+            insideExp = true;
+
+            pointer++;
+            continue;
+        }
+    }
+
+    return bindings;
+}
+
 module.exports = {
     checkParentheses,
     getNumberValue,
     isValidDecimal,
+    markBindings,
 };

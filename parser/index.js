@@ -17,14 +17,18 @@ const CLOSE_BRACKET = /}/;
 const SINGLE_QUOTE = /'/;
 const COMMA = ",";
 const COMMA_WHITESPACE = ", ";
+const OPEN_SQ_BRACKET = /\[/;
+const CLOSE_SQ_BRACKET = /\]/;
 
 // valid token types
 const validTokens = {
     PARENS: "parens",
-    NAME: "name",
+    SYMBOL: "symbol",
     NUMBER: "number",
     STRING: "string",
     MAP: "map",
+    LOCAL_BINDINGS: "local_bindings",
+    EXPRESSION: "expression",
 };
 
 // May not be required since the second-phase of the current parser can be modified
@@ -58,7 +62,7 @@ function lispParserStep1(expr) {
             CLOSE_PARENS.test(exprCopy[cursor])
         ) {
             step1Result.push({
-                type: "parens",
+                type: validTokens.PARENS,
                 value: exprCopy[cursor],
             });
 
@@ -75,7 +79,7 @@ function lispParserStep1(expr) {
             }
 
             step1Result.push({
-                type: "name",
+                type: validTokens.SYMBOL,
                 value,
             });
 
@@ -115,7 +119,7 @@ function lispParserStep1(expr) {
             }
 
             step1Result.push({
-                type: "number",
+                type: validTokens.NUMBER,
                 value: numericalValue,
             });
 
@@ -138,7 +142,7 @@ function lispParserStep1(expr) {
             cursor++;
 
             step1Result.push({
-                type: "string",
+                type: validTokens.STRING,
                 value,
             });
 
@@ -151,7 +155,7 @@ function lispParserStep1(expr) {
 
             if (CLOSE_BRACKET.test(exprCopy[cursor])) {
                 step1Result.push({
-                    type: "map",
+                    type: validTokens.MAP,
                     value: {},
                 });
 
@@ -229,7 +233,7 @@ function lispParserStep1(expr) {
             });
 
             step1Result.push({
-                type: "map",
+                type: validTokens.MAP,
                 value: objValue,
             });
 
@@ -268,6 +272,68 @@ function lispParserStep1(expr) {
             // step1Result since it'll just be like using the "list"
             // keyword
             step1Result = [...step1Result, ...listValue];
+
+            continue;
+        }
+
+        // support for parsing let bindings
+        if (OPEN_SQ_BRACKET.test(exprCopy[cursor])) {
+            let bindingsStr = "";
+
+            // move past the [
+            cursor++;
+
+            while (!CLOSE_SQ_BRACKET.test(exprCopy[cursor])) {
+                bindingsStr += exprCopy[cursor++];
+            }
+
+            const bindingsArr = parserUtils.markBindings(bindingsStr);
+
+            if (!bindingsArr) {
+                showParserError();
+                return;
+            }
+
+            const numberOfBindings = bindingsArr.length;
+
+            if (numberOfBindings % 2) {
+                showParserError();
+                return;
+            }
+
+            let bindingsParsedVals = [];
+
+            bindingsArr.forEach((binding, index) => {
+                if (index % 2) {
+                    if (binding[0] === "'" || binding[0] === "(") {
+                        // lists or expressions
+                        const parserOutput = lispParser(binding);
+                        bindingsParsedVals.push({
+                            type: "expression",
+                            value: parserOutput,
+                        });
+                    } else {
+                        // strings
+                        bindingsParsedVals.push({
+                            type: "string",
+                            value: binding,
+                        });
+                    }
+                } else {
+                    // name
+                    bindingsParsedVals.push({ type: "name", value: binding });
+                }
+            });
+
+            // move cursor past ]
+            cursor += 2;
+
+            step1Result.push({
+                type: validTokens.LOCAL_BINDINGS,
+                value: bindingsParsedVals,
+            });
+
+            continue;
         }
     }
 
@@ -275,9 +341,9 @@ function lispParserStep1(expr) {
 }
 
 /**
- * Produces a list of a function with it's arguments, which in our case might be other such lists
+ * Produces a list of a function with it's arguments
+ * which in our case might be other such lists
  * @param {Object[]} flatList - list of tokens
- * @param {number} cursor - an indicator to see where we're on the flatlist
  * @returns {(string|number|Object)[][]} - something that closely resembles an AST for a lisp
  */
 function lispParserStep2(flatList) {
@@ -311,10 +377,11 @@ function lispParserStep2(flatList) {
 
                 continue;
             } else if (
-                listCopy[pointer].type === validTokens.NAME ||
+                listCopy[pointer].type === validTokens.SYMBOL ||
                 listCopy[pointer].type === validTokens.NUMBER ||
                 listCopy[pointer].type === validTokens.STRING ||
-                listCopy[pointer].type === validTokens.MAP
+                listCopy[pointer].type === validTokens.MAP ||
+                listCopy[pointer].type === validTokens.LOCAL_BINDINGS
             ) {
                 // using the full data provided in Step 1
                 nestedList.push(listCopy[pointer]);
