@@ -28,13 +28,17 @@ function reducedArgList(args, specialForm) {
 
                 const currentState = varStore.getState();
 
-                if (!currentState[value]) {
-                    // the symbol is not found
+                let symbolValue;
+
+                if (currentState[value]) {
+                    symbolValue = currentState[value];
+                } else if (supportedMethods[value]) {
+                    symbolValue = supportedMethods[value];
+                } else {
+                    // the symbol is not found, in either locations
                     throwError({ message: `${value} is not a valid symbol` });
                     return;
                 }
-
-                const symbolValue = currentState[value];
 
                 // return the value of the symbol instead
                 return [...currentList, symbolValue];
