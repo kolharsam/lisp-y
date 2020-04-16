@@ -1,8 +1,6 @@
 # TODOs
 
 -   [x] Add `String` token support (Parser)
--   [ ] Parser step 1 is too tightly-coupled at the moment. Change it by separating the logic into
-        multiple functions.
 -   [x] Tail call optimisation (eval)
 -   [ ] Fraction rep. on divide function
 -   [x] Add autocomplete support
@@ -25,3 +23,11 @@
 -   [ ] Add support for maps within ldef statements
 -   [ ] Make evaluate understand standalone parsed statements, it doesn't need to
         be a s-expression always
+-   [ ] Support for nested objects.
+-   [ ] Improve the parser, in fact rewrite it. Using a parser generator/combinator.
+-   [ ] Add a pretty-print formatter
+-   [ ] Add a set-data structure.
+
+### References for the parser
+
+-   https://clojure.org/reference/reader
