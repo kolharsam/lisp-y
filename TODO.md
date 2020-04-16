@@ -27,6 +27,7 @@
 -   [ ] Improve the parser, in fact rewrite it. Using a parser generator/combinator.
 -   [ ] Add a pretty-print formatter
 -   [ ] Add a set-data structure.
+-   [ ] Add booleans as valid, known symbols.
 
 ### References for the parser
 
