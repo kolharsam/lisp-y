@@ -19,6 +19,7 @@ const COMMA = ",";
 const COMMA_WHITESPACE = ", ";
 const OPEN_SQ_BRACKET = /\[/;
 const CLOSE_SQ_BRACKET = /\]/;
+const HASH = /#/;
 
 // valid token types
 const validTokens = {
@@ -29,6 +30,7 @@ const validTokens = {
     MAP: "map",
     LOCAL_BINDINGS: "local_bindings",
     EXPRESSION: "expression",
+    SET: "set",
 };
 
 // May not be required since the second-phase of the current parser can be modified
@@ -335,6 +337,29 @@ function lispParserStep1(expr) {
 
             continue;
         }
+
+        if (HASH.test(exprCopy[cursor])) {
+            let setContent = "(set ";
+            // move cursor past #{
+            cursor += 2;
+
+            while (exprCopy[cursor] !== "}") {
+                setContent += exprCopy[cursor++];
+            }
+
+            setContent += ")";
+
+            // process this similar to a list is processed
+            const setValue = lispParserStep1(setContent);
+
+            // move cursor past }
+            cursor++;
+
+            // append the result of the parsed set value
+            step1Result = [...step1Result, ...setValue];
+
+            continue;
+        }
     }
 
     return step1Result;
@@ -381,7 +406,8 @@ function lispParserStep2(flatList) {
                 listCopy[pointer].type === validTokens.NUMBER ||
                 listCopy[pointer].type === validTokens.STRING ||
                 listCopy[pointer].type === validTokens.MAP ||
-                listCopy[pointer].type === validTokens.LOCAL_BINDINGS
+                listCopy[pointer].type === validTokens.LOCAL_BINDINGS ||
+                listCopy[pointer].type === validTokens.SET
             ) {
                 // using the full data provided in Step 1
                 nestedList.push(listCopy[pointer]);
