@@ -28,6 +28,7 @@
 -   [ ] Add a pretty-print formatter
 -   [ ] Add a set-data structure.
 -   [ ] Add booleans as valid, known symbols.
+-   [ ] Add first key that is duplicate to be part of error message for a set.
 
 ### References for the parser
 
