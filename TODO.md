@@ -23,10 +23,10 @@
 -   [ ] Add support for maps within ldef statements
 -   [ ] Make evaluate understand standalone parsed statements, it doesn't need to
         be a s-expression always
--   [ ] Support for nested objects.
+-   [ ] Support for nested maps.
 -   [ ] Improve the parser, in fact rewrite it. Using a parser generator/combinator.
 -   [ ] Add a pretty-print formatter
--   [ ] Add a set-data structure.
+-   [x] Add a set-data structure.
 -   [ ] Add booleans as valid, known symbols.
 -   [x] Add first key that is duplicate to be part of error message for a set.
 
