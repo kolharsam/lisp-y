@@ -39,7 +39,7 @@ const validTokens = {
 /**
  * Converts the expression to an object based on it's type
  * @param {string} expr - a valid lisp expression
- * @returns {Object[]} - a list of objects that has detials like the value and type of each token
+ * @returns {Object[]} - a list of objects that has details like the value and type of each token
  */
 function lispParserStep1(expr) {
     // An effort to not mutate the input directly
@@ -409,12 +409,8 @@ function lispParserStep2(flatList) {
                 listCopy[pointer].type === validTokens.LOCAL_BINDINGS ||
                 listCopy[pointer].type === validTokens.SET
             ) {
-                // using the full data provided in Step 1
+                // using the full data provided from Step 1 parser
                 nestedList.push(listCopy[pointer]);
-
-                // preserves the details that were extracted in the previous step
-                // nestedList.push(listCopy[pointer]);
-
                 pointer++;
             } else if (listCopy[pointer].value === ")") {
                 break;
@@ -444,16 +440,6 @@ function lispParser(expr = "") {
     if (expr === "()") {
         // we can ignore the empty expression too
         return [];
-    }
-
-    // first character of the current input
-    const firstChar = expr[0];
-
-    // Check for errors in input early and stop the
-    // execution of the function as early as possible
-    if (!(OPEN_PARENS.test(firstChar) || SINGLE_QUOTE.test(firstChar))) {
-        showParserError();
-        return;
     }
 
     // check if the parentheses are balanced

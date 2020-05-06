@@ -57,8 +57,7 @@ function reducedArgList(args, specialForm) {
 
 function evaluate(ast) {
     if (!Array.isArray(ast)) {
-        throwError({ message: "Not a valid AST" });
-        return;
+        return ast.value;
     }
 
     // when enter is pressed or () is passed as input
