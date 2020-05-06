@@ -57,8 +57,7 @@ function lispParserStep1(expr) {
         }
 
         // check if it is an opening parentheses or closed parentheses
-        // it will serve as a marker in the next
-        // step of the parser
+        // it will serve as a marker in the next step of the parser
         if (
             OPEN_PARENS.test(exprCopy[cursor]) ||
             CLOSE_PARENS.test(exprCopy[cursor])
@@ -75,9 +74,10 @@ function lispParserStep1(expr) {
         if (CHARS.test(exprCopy[cursor])) {
             let value = "";
 
-            while (CHARS.test(exprCopy[cursor])) {
-                value += exprCopy[cursor];
-                cursor++;
+            // add extra condition for the case when only symbols are
+            // being entered on the REPL
+            while (CHARS.test(exprCopy[cursor]) && cursor !== exprLength) {
+                value += exprCopy[cursor++];
             }
 
             step1Result.push({
@@ -151,6 +151,7 @@ function lispParserStep1(expr) {
             continue;
         }
 
+        // Parser method for maps
         if (OPEN_BRACKET.test(exprCopy[cursor])) {
             // move the cursor beyond the {
             cursor++;

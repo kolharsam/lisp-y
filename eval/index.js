@@ -57,7 +57,26 @@ function reducedArgList(args, specialForm) {
 
 function evaluate(ast) {
     if (!Array.isArray(ast)) {
-        return ast.value;
+        if (ast.type !== "symbol") {
+            // return the value as is, if it's not a symbol
+            return ast.value;
+        } else {
+            // check if it is a valid symbol
+            // either a core-lib fn or local variable
+
+            const symbolValue = ast.value;
+            const currentState = varStore.getState();
+
+            if (supportedMethods[symbolValue]) {
+                return "core-lib/" + symbolValue;
+            } else if (currentState[symbolValue]) {
+                console.log("\n", currentState[symbolValue]);
+                return "#user/" + symbolValue;
+            }
+        }
+
+        throwError({ message: "Not a valid symbol!" });
+        return;
     }
 
     // when enter is pressed or () is passed as input
