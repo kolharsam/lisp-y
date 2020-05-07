@@ -27,7 +27,7 @@
 -   [x] Add a set-data structure.
 -   [x] Add booleans as valid, known symbols.
 -   [x] Add first key that is duplicate to be part of error message for a set.
--   [ ] Add Support for nested sets
+-   [x] Add Support for nested sets
 
 ### References for the parser
 
