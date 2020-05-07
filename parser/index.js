@@ -36,6 +36,7 @@ const validTokens = {
     LOCAL_BINDINGS: "local_bindings",
     EXPRESSION: "expression",
     SET: "set",
+    BOOLEAN: "boolean",
 };
 
 // May not be required since the second-phase of the current parser can be modified
@@ -83,6 +84,17 @@ function lispParserStep1(expr) {
             // being entered on the REPL
             while (CHARS.test(exprCopy[cursor]) && cursor !== exprLength) {
                 value += exprCopy[cursor++];
+            }
+
+            if (value === "true" || value === "false") {
+                const val = value === "true" ? true : false;
+
+                step1Result.push({
+                    type: validTokens.BOOLEAN,
+                    value: val,
+                });
+
+                continue;
             }
 
             step1Result.push({
@@ -372,7 +384,8 @@ function lispParserStep2(flatList) {
                 listCopy[pointer].type === validTokens.STRING ||
                 listCopy[pointer].type === validTokens.MAP ||
                 listCopy[pointer].type === validTokens.LOCAL_BINDINGS ||
-                listCopy[pointer].type === validTokens.SET
+                listCopy[pointer].type === validTokens.SET ||
+                listCopy[pointer].type === validTokens.BOOLEAN
             ) {
                 // using the full data provided from Step 1 parser
                 nestedList.push(listCopy[pointer]);
