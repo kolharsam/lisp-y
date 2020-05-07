@@ -229,9 +229,23 @@ function lispParserStep1(expr) {
             cursor += 2;
 
             // get all text within the brackets
-            while (!CLOSE_PARENS.test(exprCopy[cursor])) {
+            let parenCounter = 1;
+
+            while (parenCounter !== 0) {
                 listContent += exprCopy[cursor++];
+
+                if (OPEN_PARENS.test(exprCopy[cursor])) {
+                    parenCounter++;
+                    continue;
+                }
+
+                if (CLOSE_PARENS.test(exprCopy[cursor])) {
+                    parenCounter--;
+                    continue;
+                }
             }
+
+            console.log(listContent);
 
             // These are the values within the brackets
             // splitting on whitespace. I also realize
@@ -325,8 +339,20 @@ function lispParserStep1(expr) {
             // move cursor past #{
             cursor += 2;
 
-            while (exprCopy[cursor] !== "}") {
+            let parenCounter = 1;
+
+            while (parenCounter !== 0) {
                 setContent += exprCopy[cursor++];
+
+                if (exprCopy[cursor] === "{") {
+                    parenCounter++;
+                    continue;
+                }
+
+                if (exprCopy[cursor] === "}") {
+                    parenCounter--;
+                    continue;
+                }
             }
 
             setContent += ")";
