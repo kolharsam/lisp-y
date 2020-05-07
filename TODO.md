@@ -19,13 +19,13 @@
 -   [x] Add support for quoted lists
 -   [x] Add support for float values
 -   [ ] Add support for doc-strings and a doc function for all core-lib functions
--   [ ] Add support for maps within ldef statements
+-   [x] Add support for maps within ldef statements
 -   [x] Make evaluate understand standalone parsed statements, it doesn't need to
         be a s-expression always
 -   [x] Support for nested maps.
 -   [ ] Improve the parser, in fact rewrite it. Using a parser generator/combinator.
 -   [x] Add a set-data structure.
--   [ ] Add booleans as valid, known symbols.
+-   [x] Add booleans as valid, known symbols.
 -   [x] Add first key that is duplicate to be part of error message for a set.
 
 ### References for the parser
