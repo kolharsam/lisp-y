@@ -4,6 +4,7 @@
 
 const parserUtils = require("./util.js");
 const showParserError = require("../error").showParseError;
+const { evalString, toJS } = require("@borkdude/sci");
 
 // Required Regular Expressions
 const OPEN_PARENS = /\(/;
@@ -15,11 +16,15 @@ const DOUBLE_QUOTE = /"/;
 const OPEN_BRACKET = /{/;
 const CLOSE_BRACKET = /}/;
 const SINGLE_QUOTE = /'/;
-const COMMA = ",";
-const COMMA_WHITESPACE = ", ";
+const COMMA = /,/;
 const OPEN_SQ_BRACKET = /\[/;
 const CLOSE_SQ_BRACKET = /\]/;
 const HASH = /#/;
+
+// I was so hopeful of using this, but yeah, the nested maps
+// thing has a lot of cases to be handled and can be huge reason
+// bugs that might occur while processing maps
+// const KEYS = /:?[a-zA-Z]+/g;
 
 // valid token types
 const validTokens = {
@@ -51,7 +56,7 @@ function lispParserStep1(expr) {
 
     while (cursor < exprLength) {
         // ignore whitespaces & end parentheses
-        if (WHITESPACE.test(exprCopy[cursor])) {
+        if (WHITESPACE.test(exprCopy[cursor]) || COMMA.test(exprCopy[cursor])) {
             cursor++;
             continue;
         }
@@ -128,8 +133,7 @@ function lispParserStep1(expr) {
             continue;
         }
 
-        // Identifying String tokens
-
+        // String tokens
         if (DOUBLE_QUOTE.test(exprCopy[cursor])) {
             // move cursor beyond the quote
             cursor++;
@@ -153,9 +157,6 @@ function lispParserStep1(expr) {
 
         // Parser method for maps
         if (OPEN_BRACKET.test(exprCopy[cursor])) {
-            // move the cursor beyond the {
-            cursor++;
-
             if (CLOSE_BRACKET.test(exprCopy[cursor])) {
                 step1Result.push({
                     type: validTokens.MAP,
@@ -167,77 +168,40 @@ function lispParserStep1(expr) {
                 continue;
             }
 
-            let mapValues = "";
+            let mapString = exprCopy[cursor],
+                parenCounter = 1;
 
-            // accumulate all values of the map until I
-            // get to the end of the map
-            while (!CLOSE_BRACKET.test(exprCopy[cursor])) {
-                mapValues += exprCopy[cursor];
+            cursor++;
+
+            while (parenCounter !== 0) {
+                const currentChar = exprCopy[cursor];
+
+                if (currentChar === "{") {
+                    parenCounter++;
+                }
+
+                mapString += currentChar;
+
+                if (currentChar === "}") {
+                    parenCounter--;
+                }
+
                 cursor++;
             }
 
-            // now, we can split by whitespace or commas, which
-            // ever one that works out and see if there are an
-            // even number of values
-            let keyValueSplits;
+            // Use borkdude's sci for this - feels like cheating
+            // but I will build a method of my own to be able to
+            // parse all sorts of maps.
 
-            if (mapValues.indexOf(COMMA) !== -1) {
-                keyValueSplits = mapValues.split(COMMA_WHITESPACE);
-            } else {
-                keyValueSplits = mapValues.split(" ");
-            }
+            // Eitherways - many thanks @borkdude
 
-            if (keyValueSplits.length % 2 !== 0) {
-                showParserError();
-                return;
-            }
+            const evalMap = evalString(mapString);
 
-            let objValue = {};
-            let keys = [],
-                values = [];
-
-            keyValueSplits.forEach((objVal, index) => {
-                // even indices are the keys
-                if (index % 2 === 0) {
-                    // keys have to either begin with either : or "
-                    if (objVal[0] === ":") {
-                        const [colon, ...restOfKey] = objVal;
-                        keys.push(restOfKey.join(""));
-                    } else if (objVal[0] === '"') {
-                        const keySplit = objVal.split('"');
-                        const keyVal = keySplit[1];
-
-                        keys.push(keyVal);
-                    }
-                }
-
-                // odd indices are the values
-                if (index % 2 !== 0) {
-                    // TODO: Check if this a valid data-type
-                    values.push(objVal);
-                }
-            });
-
-            keys.forEach((key, index) => {
-                // check for value type and then do attach the values
-                // possibly a try-catch with parseInt
-                const currentValue = values[index];
-
-                const numberValue = parserUtils.getNumberValue(currentValue);
-
-                if (typeof numberValue !== "number") {
-                    // it is a string
-                    const valSplit = currentValue.split('"');
-                    objValue[key] = valSplit[1];
-                } else {
-                    // it is a number
-                    objValue[key] = numberValue;
-                }
-            });
+            const jsValue = toJS(evalMap);
 
             step1Result.push({
                 type: validTokens.MAP,
-                value: objValue,
+                value: jsValue,
             });
 
             // move beyond the last }
