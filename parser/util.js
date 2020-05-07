@@ -113,12 +113,20 @@ function markBindings(statement) {
                 while (statementSplits[pointer] !== '"') {
                     currentValue += statementSplits[pointer++];
                 }
-            } else if (currentChar === "'" || currentChar === "(") {
-                if (currentChar === "'") {
+            } else if (
+                currentChar === "'" ||
+                currentChar === "(" ||
+                currentChar === "#" ||
+                currentChar === "{"
+            ) {
+                if (currentChar === "'" || currentChar === "#") {
                     pointer += 2;
-                    // if there's a ' present, it must be there for
-                    // quoted lists
-                    currentValue += "'(";
+
+                    if (currentChar === "'") {
+                        currentValue += "'(";
+                    } else {
+                        currentValue += "#{";
+                    }
                 } else {
                     pointer++;
                     currentValue += currentChar;
@@ -127,15 +135,29 @@ function markBindings(statement) {
                 numberOfBounds = 1;
 
                 while (true) {
-                    if (statementSplits[pointer] === "(") {
+                    if (
+                        statementSplits[pointer] === "(" ||
+                        statementSplits[pointer] === "{"
+                    ) {
                         numberOfBounds++;
                     }
 
-                    if (statementSplits[pointer] === ")") {
+                    if (
+                        statementSplits[pointer] === ")" ||
+                        statementSplits[pointer] === "}"
+                    ) {
                         numberOfBounds--;
 
                         if (numberOfBounds === 0) {
-                            currentValue += ")";
+                            if (
+                                currentValue[0] === "(" ||
+                                currentValue[1] === "("
+                            ) {
+                                currentValue += ")";
+                            } else {
+                                currentValue += "}";
+                            }
+
                             break;
                         }
                     }

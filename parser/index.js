@@ -284,7 +284,12 @@ function lispParserStep1(expr) {
 
             bindingsArr.forEach((binding, index) => {
                 if (index % 2) {
-                    if (binding[0] === "'" || binding[0] === "(") {
+                    if (
+                        binding[0] === "'" ||
+                        binding[0] === "(" ||
+                        binding[0] === "#" ||
+                        binding[0] === "{"
+                    ) {
                         // lists or expressions
                         const parserOutput = lispParser(binding);
                         bindingsParsedVals.push({
