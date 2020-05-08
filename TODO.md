@@ -4,7 +4,7 @@
 -   [x] Tail call optimisation (eval)
 -   [ ] Fraction rep. on divide function
 -   [x] Add autocomplete support
--   [ ] Fix autocomplete support for `lib` functions
+-   [x] Fix autocomplete support for `lib` functions
 -   [ ] Method abstractions
 -   [ ] Library to be split based on the purpose that they serve.
 -   [x] Error reporting as a separate module, consistent reporting throughout.
