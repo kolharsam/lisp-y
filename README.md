@@ -1,7 +1,7 @@
 # lisp-y
 
 ```
-(apply str (interpose " " (list "My" "attempt" "at" "making" "a" "lisp")))
+(apply str (interpose " " (list "My" "attempt" "at" "making" "a" "lisp" "interpreter")))
 
 // Output: "My attempt at making a lisp"
 ```
