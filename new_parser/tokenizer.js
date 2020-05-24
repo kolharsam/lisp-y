@@ -121,8 +121,32 @@ console.log(
     grain_tokenizer("(let [a (add 1 2 3) b '(1 2 3 4 5)] (print a b))")
 );
 
+function number_tokenizer(input) {}
+
 function tokenizer(grains_list) {
     // make seperate method to locate each of the tokens
+    let pointer = 0;
+    const grains_len = grains_list.length;
+    let tokens_list = [];
+
+    while (pointer <= grains_len) {
+        const currentElement = grains_list[pointer];
+
+        if (currentElement.type === validGrains.DIGIT) {
+            const [value, err, index] = number_tokenizer(currentElement);
+
+            if (err) {
+                // FIXME: Better error handling required
+                console.error("There was an error in parsing!");
+                return;
+            }
+
+            pointer = index;
+        }
+        // identifying numbers
+
+        pointer++;
+    }
     // merge chars - make symbols
     // merge quotes and chars - make strings
     // merge digits - make numbers
@@ -130,6 +154,7 @@ function tokenizer(grains_list) {
     // after this stage - there should be no delimiters
     // identify booleans
     // identify nil's
+    return tokens_list;
 }
 
 // exports.validTokens = validTokens;
