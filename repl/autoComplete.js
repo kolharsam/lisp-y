@@ -2,8 +2,8 @@ const libFunctions = require("../lib");
 
 function autoComplete(line) {
     const completions = Object.keys(libFunctions);
-    // TODO: Fix this autocomplete suggestions
-    const hits = completions.filter(funcName => funcName.startsWith(line));
+    const latestFn = line.split("(").reverse()[0];
+    const hits = completions.filter(funcName => funcName.startsWith(latestFn));
 
     return [hits.length ? hits : completions, line];
 }
