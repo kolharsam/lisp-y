@@ -7,10 +7,6 @@
  * 
  * Of course, by making a parser!
  * 
- * We'll be making a lisp parser (Yes! my favorite kinda syntax now)
- * 
- * parse("(add 1 2 (add 1 2 5))");
- * 
  * should yield:
  * 
 //   "target": "add",
