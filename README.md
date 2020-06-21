@@ -8,6 +8,15 @@
 
 ![lisp-y CI](https://github.com/kolharsam/lisp-y/workflows/lisp-y%20CI/badge.svg) [![Run on Repl.it](https://repl.it/badge/github/kolharsam/lisp-y)](https://repl.it/github/kolharsam/lisp-y) [![DeepScan grade](https://deepscan.io/api/teams/8319/projects/10466/branches/145810/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=8319&pid=10466&bid=145810)
 
+## Instructions to setup the repo
+
+- Fork this respository
+- Clone that forked repository
+- Make sure you have `npm` and `node` installed. Install or upgrade v10 Node at the very least.
+- Use `npm install` to install dependencies.
+- Useful commands are present in the `Makefile` to `run`, `build` and `run-tests`.
+- Make a Pull Request!
+
 ## Notes
 
 As of now, only some methods have been added which can be evaluated. But yes, over time I hope to keep building on this.
